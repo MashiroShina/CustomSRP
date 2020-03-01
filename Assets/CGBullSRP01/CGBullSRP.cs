@@ -20,6 +20,13 @@ namespace InfinityExtend.Rendering.Runtime
         {
             return new CGBullSRPInst();
         }
+        protected override void OnValidate() {
+            //Fixed
+        }
+
+        protected override void OnDisable() {
+
+        }
     }
 
     public class CGBullSRPInst : RenderPipeline
