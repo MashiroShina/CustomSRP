@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+
 namespace InfinityExtend.Rendering.Runtime
 {
+    [ExecuteInEditMode]
     public class CGBullSRP : RenderPipelineAsset
     {
         [UnityEditor.MenuItem("Assets/Create/Render Pipeline/CGBullSRP01", priority = 1)]
