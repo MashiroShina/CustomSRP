@@ -82,6 +82,10 @@
         <e p="SRP0402_Multipass" t="Include">
           <e p="FurManyPass.hlsl" t="Include" />
           <e p="FurManyPass.shader" t="Include" />
+          <e p="MFur" t="Include">
+            <e p="FurHelper.cginc" t="Include" />
+            <e p="FurHelper.shader" t="Include" />
+          </e>
           <e p="SRP0402.cs" t="Include" />
           <e p="SRP0402_UnlitOpaque.shader" t="Include" />
           <e p="SRP0402_UnlitTransparent.shader" t="Include" />

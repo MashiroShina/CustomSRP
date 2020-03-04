@@ -1,6 +1,6 @@
 #ifndef FurHelper
 #define FurHelper
-#pragma target 5.0
+#pragma target 3.0
 
             
             #include "UnityCG.cginc"
@@ -21,34 +21,34 @@ struct v2f
 
 CBUFFER_START(UnityPerMaterial)
 
-fixed4 _Color;
-fixed4 _Specular;
-half _FurShininess;
-half _ShadowRange;
-half _WindAmplitude;
-half _WindFrequency;
-half _WindDistribution;
-fixed _Cutoff;
-
-sampler2D _MainTex;
-half4 _MainTex_ST;
-sampler2D _FurTex;
-half4 _FurTex_ST;
-
-fixed _FurLength;
-fixed _FurDensity;
-fixed _FurThinness;
-fixed _FurShading;
-
-fixed4 _AOColor;
-fixed4 _ShadowColor;
-
-float4 _ForceGlobal;
-float4 _ForceLocal;
-
-
-fixed4 _RimColor;
-half _RimPower;
+    fixed4 _Color;
+    fixed4 _Specular;
+    half _FurShininess;
+    half _ShadowRange;
+    half _WindAmplitude;
+    half _WindFrequency;
+    half _WindDistribution;
+    fixed _Cutoff;
+    
+    sampler2D _MainTex;
+    half4 _MainTex_ST;
+    sampler2D _FurTex;
+    half4 _FurTex_ST;
+    
+    fixed _FurLength;
+    fixed _FurDensity;
+    fixed _FurThinness;
+    fixed _FurShading;
+    
+    fixed4 _AOColor;
+    fixed4 _ShadowColor;
+    
+    float4 _ForceGlobal;
+    float4 _ForceLocal;
+    
+    
+    fixed4 _RimColor;
+    half _RimPower;
 
 CBUFFER_END
 
