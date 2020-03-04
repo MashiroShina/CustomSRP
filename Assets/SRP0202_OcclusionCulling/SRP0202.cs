@@ -61,8 +61,8 @@ public class SRP0202Instance : RenderPipeline
             FilteringSettings filterSettings = new FilteringSettings(RenderQueueRange.all);
 
             //Camera clear flag
-            CommandBuffer cmd = new CommandBuffer();
-            cmd.name = "Cam:"+camera.name+" ClearFlag";
+            CommandBuffer cmd = CommandBufferPool.Get(m_PassName.name);
+            cmd.name = "Cam:"+camera.name+" ClearFlag"+" "+cmd.name;
             cmd.ClearRenderTarget(clearDepth, clearColor, camera.backgroundColor);
             context.ExecuteCommandBuffer(cmd);
             cmd.Release();

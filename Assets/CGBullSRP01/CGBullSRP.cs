@@ -93,14 +93,14 @@ namespace InfinityExtend.Rendering.Runtime
                 perObjectData = PerObjectData.Lightmaps
             };
             ///从CommandBufferPool来获得池化的CB并申请TemporalRT设置RenderTarget和ShaderPass后进行DrawRender
-            CommandBuffer CommandList_PrePass =
-                CommandBufferPool.Get(InfinityPassIDs.PreDepthPass.name);
-            CommandList_PrePass.GetTemporaryRT(InfinityShaderIDs.RT_DepthBuffer,
-                RenderCamera.pixelWidth, RenderCamera.pixelHeight, 24, FilterMode.Point, RenderTextureFormat.Depth);
+            CommandBuffer CommandList_PrePass = CommandBufferPool.Get(InfinityPassIDs.PreDepthPass.name);
+            CommandList_PrePass.GetTemporaryRT(InfinityShaderIDs.RT_DepthBuffer, RenderCamera.pixelWidth, RenderCamera.pixelHeight, 24, FilterMode.Point, RenderTextureFormat.Depth);
             CommandList_PrePass.SetRenderTarget(InfinityShaderIDs.ID_SceneDepth);
             CommandList_PrePass.ClearRenderTarget(true, true, RenderCamera.backgroundColor);
             RenderContent.ExecuteCommandBuffer(CommandList_PrePass);
             CommandBufferPool.Release(CommandList_PrePass);
+            RenderContent.DrawRenderers(CullingData, ref DrawSetting_My_PrePass, ref FilterSetting_My_PrePass);
+
 
             //////Draw GBufferPass
             FilteringSettings FilterSetting_My_GBuffer = new FilteringSettings
@@ -109,31 +109,18 @@ namespace InfinityExtend.Rendering.Runtime
                 layerMask = RenderCamera.cullingMask,
                 renderQueueRange = RenderQueueRange.opaque,
             };
-            DrawingSettings DrawSetting_My_GBuffer = new DrawingSettings(
-               InfinityPassIDs.GBufferPass, new SortingSettings(RenderCamera)
-                    {criteria = SortingCriteria.RenderQueue | SortingCriteria.OptimizeStateChanges})
+            DrawingSettings DrawSetting_My_GBuffer = new DrawingSettings(InfinityPassIDs.GBufferPass, new SortingSettings(RenderCamera) { criteria = SortingCriteria.RenderQueue | SortingCriteria.OptimizeStateChanges })
             {
                 enableInstancing = true,
                 enableDynamicBatching = true,
                 perObjectData = PerObjectData.Lightmaps
             };
-
-            CommandBuffer CommandList_GBufferPass =
-                CommandBufferPool.Get(InfinityPassIDs.GBufferPass.name);
-            CommandList_GBufferPass.GetTemporaryRT(
-                InfinityShaderIDs.RT_GBufferBaseColor, RenderCamera.pixelWidth,
-                RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGB32);
-            CommandList_GBufferPass.GetTemporaryRT(
-                InfinityShaderIDs.RT_GBufferMicroface, RenderCamera.pixelWidth,
-                RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGB32);
-            CommandList_GBufferPass.GetTemporaryRT(InfinityShaderIDs.RT_GBufferNormal,
-                RenderCamera.pixelWidth, RenderCamera.pixelHeight, 0, FilterMode.Point,
-                RenderTextureFormat.ARGB2101010);
-            CommandList_GBufferPass.GetTemporaryRT(
-                InfinityShaderIDs.RT_GBufferEmissive, RenderCamera.pixelWidth,
-                RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGBHalf);
-            CommandList_GBufferPass.SetRenderTarget(InfinityShaderIDs.ID_GBuffer,
-               InfinityShaderIDs.ID_SceneDepth);
+            CommandBuffer CommandList_GBufferPass = CommandBufferPool.Get(InfinityPassIDs.GBufferPass.name);
+            CommandList_GBufferPass.GetTemporaryRT(InfinityShaderIDs.RT_GBufferBaseColor, RenderCamera.pixelWidth, RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGB32);
+            CommandList_GBufferPass.GetTemporaryRT(InfinityShaderIDs.RT_GBufferMicroface, RenderCamera.pixelWidth, RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGB32);
+            CommandList_GBufferPass.GetTemporaryRT(InfinityShaderIDs.RT_GBufferNormal, RenderCamera.pixelWidth, RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGB2101010);
+            CommandList_GBufferPass.GetTemporaryRT(InfinityShaderIDs.RT_GBufferEmissive, RenderCamera.pixelWidth, RenderCamera.pixelHeight, 0, FilterMode.Point, RenderTextureFormat.ARGBHalf);
+            CommandList_GBufferPass.SetRenderTarget(InfinityShaderIDs.ID_GBuffer, InfinityShaderIDs.ID_SceneDepth);
             CommandList_PrePass.ClearRenderTarget(false, true, RenderCamera.backgroundColor);
             RenderContent.ExecuteCommandBuffer(CommandList_GBufferPass);
             CommandBufferPool.Release(CommandList_GBufferPass);
@@ -151,7 +138,7 @@ namespace InfinityExtend.Rendering.Runtime
 #endif
 
             //////Bilt To Screen
-            CommandBuffer CommandList_BiltToCamera = CommandBufferPool.Get("My_BiltPass");
+            CommandBuffer CommandList_BiltToCamera = CommandBufferPool.Get("InfinityCommandList");
             bool IsGameView; //检测当前View是不是GameView
             if (RenderCamera.targetTexture != null)
             {

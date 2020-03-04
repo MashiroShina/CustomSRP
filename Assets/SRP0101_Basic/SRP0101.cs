@@ -52,10 +52,13 @@ public class SRP0101Instance : RenderPipeline
 
             //Camera clear flag
             CommandBuffer cmd = new CommandBuffer();
-            cmd.ClearRenderTarget(clearDepth, clearColor, camera.backgroundColor);
-            context.ExecuteCommandBuffer(cmd);
-            cmd.Release();
-
+            CommandBuffer cmdList = CommandBufferPool.Get(m_PassName.name);
+            cmdList.ClearRenderTarget(clearDepth,clearColor,camera.backgroundColor);
+            
+            //cmd.ClearRenderTarget(clearDepth, clearColor, camera.backgroundColor);
+            context.ExecuteCommandBuffer(cmdList);
+            //cmd.Release();
+            cmdList.Release();
             //Setup DrawSettings and FilterSettings
             var sortingSettings = new SortingSettings(camera);
             DrawingSettings drawSettings = new DrawingSettings(m_PassName, sortingSettings);

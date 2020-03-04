@@ -95,4 +95,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/SRP1003_DefaultShaders/SRP1003_DefaultShaders.unity
     guid: a528bfc08fcb70b49bf234680e6636f2
+  - enabled: 1
+    path: Assets/CGBullSRP01/SRP.unity
+    guid: 15659f1cecbc14dfeb73365266a8c510
   m_configObjects: {}

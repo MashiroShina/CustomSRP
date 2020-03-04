@@ -2,7 +2,6 @@
 #define FurManyPass
 
 			#include "../_General/ShaderLibrary/Input/Transformation.hlsl"
-
 			struct appdata
 			{
 				float4 vertex : POSITION;

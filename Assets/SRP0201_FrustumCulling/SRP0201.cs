@@ -104,6 +104,7 @@ public class SRP0201Instance : RenderPipeline
             #if UNITY_EDITOR
             if (isSceneViewCam)
             {
+                //绘制lightprob等Gizmos
                 context.DrawGizmos(camera, GizmoSubset.PostImageEffects);
             }
             #endif

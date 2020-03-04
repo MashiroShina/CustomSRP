@@ -59,12 +59,17 @@ public class SRP0402Instance : RenderPipeline
             //Setup DrawSettings and FilterSettings
             var sortingSettings = new SortingSettings(camera);
             DrawingSettings drawSettings = new DrawingSettings(new ShaderTagId("SRP0402_Pass"), sortingSettings);
-            for(int i=0; i<10; i++) //MultiPass
+            drawSettings.enableDynamicBatching = true; // Dynamic Batching is OFF by-default
+            drawSettings.enableInstancing = true; // GPU Instancing is ON by-default
+            for(int i=0; i<16; i++) //MultiPass
             {
                 drawSettings.SetShaderPassName(i,new ShaderTagId("SRP0402_Pass"+i));
             }
             FilteringSettings filterSettings = new FilteringSettings(RenderQueueRange.all);
-
+           
+            
+            //SRPBatcher
+            GraphicsSettings.useScriptableRenderPipelineBatching = true;
             //Skybox
             if(drawSkyBox)  {  context.DrawSkybox(camera);  }
 

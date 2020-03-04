@@ -61,8 +61,7 @@ public class SRP0203Instance : RenderPipeline
             DrawingSettings drawSettings = new DrawingSettings(m_PassName, sortingSettings);
             FilteringSettings filterSettings = new FilteringSettings(RenderQueueRange.all);
             //filterSettings.layerMask = 1; //only draws objects marked with UI layer
-            filterSettings.renderingLayerMask = 1 << 4; //only draws renderers that has RenderingLayerMask Layer5 **********************************
-
+            filterSettings.renderingLayerMask = 1 << 5; //only draws renderers that has RenderingLayerMask Layer5 **********************************
             //Skybox
             if(drawSkyBox)  {  context.DrawSkybox(camera);  }
 

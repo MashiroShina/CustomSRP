@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="_General" t="Include">
+          <e p="SceneRenderPipeline.cs" t="Include" />
+          <e p="ShaderLibrary" t="Include">
+            <e p="Input" t="Include">
+              <e p="InputMacro.hlsl" t="Include" />
+              <e p="Transformation.hlsl" t="Include" />
+              <e p="UnityBuiltIn.hlsl" t="Include" />
+            </e>
+          </e>
+          <e p="UIControl.cs" t="Include" />
+        </e>
+        <e p="CGBullSRP01" t="Include">
+          <e p="CGBullSRP.cs" t="Include" />
+          <e p="InfinityDrawFullScreen.shader" t="Include" />
+          <e p="InfinityGraphicsUtillity.cs" t="Include" />
+          <e p="InfinityRenderPipelineIDs.cs" t="Include" />
+          <e p="MUnlit.shader" t="Include" />
+        </e>
+        <e p="SRP0101_Basic" t="Include">
+          <e p="SRP0101.cs" t="Include" />
+          <e p="SRP0101_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0101_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0101_Fog" t="Include">
+          <e p="SRP0101_UnlitOpaqueFog.hlsl" t="Include" />
+          <e p="SRP0101_UnlitOpaqueFog.shader" t="Include" />
+          <e p="SRP0101_UnlitTransparentFog.shader" t="Include" />
+        </e>
+        <e p="SRP0102_AssetSettings" t="Include">
+          <e p="SRP0102.cs" t="Include" />
+          <e p="SRP0102_Asset.cs" t="Include" />
+          <e p="SRP0102_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0102_UnlitTransparent.shader" t="Include" />
+          <e p="te.cs" t="Include" />
+        </e>
+        <e p="SRP0103_CustomGUI" t="Include">
+          <e p="Editor" t="Include">
+            <e p="SRP0103_Editor.cs" t="Include" />
+          </e>
+          <e p="SRP0103.cs" t="Include" />
+          <e p="SRP0103_Asset.cs" t="Include" />
+          <e p="SRP0103_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0103_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0201_FrustumCulling" t="Include">
+          <e p="SRP0201.cs" t="Include" />
+          <e p="SRP0201_CamSwitch.cs" t="Include" />
+          <e p="SRP0201_SceneObjects.cs" t="Include" />
+          <e p="SRP0201_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0201_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0202_OcclusionCulling" t="Include">
+          <e p="SRP0202.cs" t="Include" />
+          <e p="SRP0202_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0202_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0203_RenderingLayerMask" t="Include">
+          <e p="SRP0203.cs" t="Include" />
+          <e p="SRP0203_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0203_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0301_Batching" t="Include">
+          <e p="RandomObjectsInstanced.cs" t="Include" />
+          <e p="RandomObjectsSRPBatcher.cs" t="Include" />
+          <e p="SRP0301.cs" t="Include" />
+          <e p="SRP0301_GPUInstancing.shader" t="Include" />
+          <e p="SRP0301_SRPBatcher.shader" t="Include" />
+          <e p="SRP0301_UnlitOpaque.shader" t="Include" />
+        </e>
+        <e p="SRP0401_NoSpecificPass" t="Include">
+          <e p="SRP0401.cs" t="Include" />
+          <e p="SRP0401_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0401_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0402_Multipass" t="Include">
+          <e p="FurManyPass.hlsl" t="Include" />
+          <e p="FurManyPass.shader" t="Include" />
+          <e p="SRP0402.cs" t="Include" />
+          <e p="SRP0402_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0402_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0403_Compute" t="Include">
+          <e p="SRP0403.cs" t="Include" />
+          <e p="SRP0403_Asset.cs" t="Include" />
+          <e p="SRP0403_ComputeShader.compute" t="Include" />
+          <e p="SRP0403_DepthOnly.shader" t="Include" />
+          <e p="SRP0403_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0403_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0404_DrawCommands" t="Include">
+          <e p="DrawInstancedIndirect.shader" t="Include" />
+          <e p="SRP0404.cs" t="Include" />
+          <e p="SRP0404_Asset.cs" t="Include" />
+        </e>
+        <e p="SRP0405_Callback" t="Include">
+          <e p="CallbackTest.cs" t="Include" />
+          <e p="SRP0405.cs" t="Include" />
+          <e p="SRP0405_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0405_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0501_SoftParticle" t="Include">
+          <e p="SRP0501.cs" t="Include" />
+          <e p="SRP0501_DepthOnly.shader" t="Include" />
+          <e p="SRP0501_SoftParticle.shader" t="Include" />
+          <e p="SRP0501_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0501_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0502_Distortion" t="Include">
+          <e p="SRP0502.cs" t="Include" />
+          <e p="SRP0502_Distortion.shader" t="Include" />
+          <e p="SRP0502_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0502_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0601_RealtimeLights" t="Include">
+          <e p="SRP0601.cs" t="Include" />
+          <e p="SRP0601_LitOpaque.shader" t="Include" />
+          <e p="SRP0601_RealtimeLights.hlsl" t="Include" />
+        </e>
+        <e p="SRP0602_BakedLights" t="Include">
+          <e p="SRP0602.cs" t="Include" />
+          <e p="SRP0602_LightmapBaked.shader" t="Include" />
+          <e p="SRP0602_LightProbe.shader" t="Include" />
+          <e p="SRP0602_ReflectionProbe.shader" t="Include" />
+          <e p="SRP0602_UnlitOpaque.shader" t="Include" />
+        </e>
+        <e p="SRP0603_RealtimeShadowDirectional" t="Include">
+          <e p="SRP0603.cs" t="Include" />
+          <e p="SRP0603_LitOpaque.shader" t="Include" />
+          <e p="SRP0603_ScreenSpaceShadow.shader" t="Include" />
+        </e>
+        <e p="SRP0701_HDR_MSAA" t="Include">
+          <e p="SRP0701.cs" t="Include" />
+          <e p="SRP0701_UnlitOpaqueHDR.shader" t="Include" />
+          <e p="SRP0701_UnlitTransparentHDR.shader" t="Include" />
+        </e>
+        <e p="SRP0701_Stencil" t="Include">
+          <e p="SRP0704_UnlitOpaque_Stencil.shader" t="Include" />
+        </e>
+        <e p="SRP0702_Postprocessing" t="Include">
+          <e p="Pipeline" t="Include">
+            <e p="SRP0702.cs" t="Include" />
+            <e p="SRP0702_DepthOnly.shader" t="Include" />
+          </e>
+          <e p="SRP0702_UnlitOpaqueHDR.shader" t="Include" />
+          <e p="SRP0702_UnlitTransparentHDR.shader" t="Include" />
+        </e>
+        <e p="SRP0703_MotionVector" t="Include">
+          <e p="Pipeline" t="Include">
+            <e p="MotionVectorsDebug.shader" t="Include" />
+            <e p="SRP0703.cs" t="Include" />
+            <e p="SRP0703_DepthOnly.shader" t="Include" />
+            <e p="SRP0703_MotionVector.shader" t="Include" />
+          </e>
+          <e p="SRP0703_UnlitOpaqueHDR.shader" t="Include" />
+          <e p="SRP0703_UnlitTransparentHDR.shader" t="Include" />
+        </e>
+        <e p="SRP0801_UGUI" t="Include">
+          <e p="SRP0801.cs" t="Include" />
+          <e p="SRP0801_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0801_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0802_RenderPass" t="Include">
+          <e p="SRP0802.cs" t="Include" />
+          <e p="SRP0802_HLSLSupport.cginc" t="Include" />
+          <e p="SRP0802_RenderPass_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0802_RenderPass_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0803_MultiRenderTarget" t="Include">
+          <e p="SRP0803.cs" t="Include" />
+          <e p="SRP0803_FinalColor.shader" t="Include" />
+          <e p="SRP0803_MRT_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0803_MRT_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0901_SceneViewFix" t="Include">
+          <e p="SRP0901.cs" t="Include" />
+          <e p="SRP0901_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0901_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP0902_SceneViewDrawMode" t="Include">
+          <e p="CustomDrawModeAsset.cs" t="Include" />
+          <e p="DebugShaders" t="Include">
+            <e p="Color.shader" t="Include" />
+            <e p="Depth.shader" t="Include" />
+            <e p="Normal.shader" t="Include" />
+            <e p="Tangent.shader" t="Include" />
+            <e p="UV0.shader" t="Include" />
+          </e>
+          <e p="SRP0902.cs" t="Include" />
+          <e p="SRP0902_UnlitOpaque.shader" t="Include" />
+          <e p="SRP0902_UnlitTransparent.shader" t="Include" />
+          <e p="SRP0902SceneView.cs" t="Include" />
+        </e>
+        <e p="SRP1001_Error" t="Include">
+          <e p="SRP1001.cs" t="Include" />
+          <e p="SRP1001_UnlitOpaque.shader" t="Include" />
+          <e p="SRP1001_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP1002_Debug" t="Include">
+          <e p="SRP1002.cs" t="Include" />
+          <e p="SRP1002_UnlitOpaque.shader" t="Include" />
+          <e p="SRP1002_UnlitTransparent.shader" t="Include" />
+        </e>
+        <e p="SRP1003_DefaultShaders" t="Include">
+          <e p="SRP1003.cs" t="Include" />
+          <e p="SRP1003_UnlitOpaque.shader" t="Include" />
+          <e p="SRP1003_UnlitTransparent.shader" t="Include" />
+        </e>
+      </e>
+      <e p="CustomSRP.sln" t="IncludeFlat" />
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+    </e>
+    <e p="$USER_HOME$/Library/Caches/Rider2018.2/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2018.2/resharper-host/local/Transient/ReSharperHost/v182/SolutionCaches/_CustomSRP.-1915049233.00" t="ExcludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+  </component>
+</project>

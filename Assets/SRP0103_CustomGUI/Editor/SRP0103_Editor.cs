@@ -31,7 +31,7 @@ namespace SRP0103
             GUILayout.Space(15);
 
             togglegroup1 = EditorGUILayout.BeginToggleGroup ("Show Settings", togglegroup1);
-                EditorGUI.indentLevel++;
+                EditorGUI.indentLevel++;//让底下的Draw Opaque Object 缩进
                 m_drawOpaqueObjects.boolValue = EditorGUILayout.Toggle("Draw Opaque Objects",m_drawOpaqueObjects.boolValue);
                 m_drawTransparentObjects.boolValue = EditorGUILayout.Toggle("Draw Transparent Objects",m_drawTransparentObjects.boolValue);
                 EditorGUI.indentLevel--;
