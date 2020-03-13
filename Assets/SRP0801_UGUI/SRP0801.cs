@@ -65,7 +65,7 @@ public class SRP0801Instance : RenderPipeline
             //Setup DrawSettings and FilterSettings
             var sortingSettings = new SortingSettings(camera);
             DrawingSettings drawSettings = new DrawingSettings(m_PassName, sortingSettings);
-           DrawingSettings drawSettingsDefault = new DrawingSettings(m_PassNameDefault, sortingSettings);
+            DrawingSettings drawSettingsDefault = new DrawingSettings(m_PassNameDefault, sortingSettings);
             //This will let you draw shader passes without the LightMode,
             //thus it draws the default UGUI materials
             drawSettingsDefault.SetShaderPassName(1,m_PassNameDefault); 
@@ -96,7 +96,7 @@ public class SRP0801Instance : RenderPipeline
             #if UNITY_EDITOR
             if (isSceneViewCam)
             {
-                context.DrawGizmos(camera, GizmoSubset.PostImageEffects);
+               // context.DrawGizmos(camera, GizmoSubset.PostImageEffects);
             }
             #endif
 

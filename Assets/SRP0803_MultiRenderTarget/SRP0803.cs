@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -29,13 +30,19 @@ public class SRP0803Instance : RenderPipeline
 
     private static int m_AlbedoRTid = Shader.PropertyToID("_CameraAlbedoTexture");
     private static int m_EmissionRTid = Shader.PropertyToID("_CameraEmissionTexture");
+    private static int m_EmissionRTid2 = Shader.PropertyToID("_CameraEmissionTexture2");
     private static int m_DepthRTid = Shader.PropertyToID("_CameraDepthTexture");
     private static RenderTargetIdentifier m_AlbedoRT = new RenderTargetIdentifier(m_AlbedoRTid);
     private static RenderTargetIdentifier m_EmissionRT = new RenderTargetIdentifier(m_EmissionRTid);
+    private static RenderTargetIdentifier m_EmissionRT2 = new RenderTargetIdentifier(m_EmissionRTid2);
     private static RenderTargetIdentifier m_DepthRT = new RenderTargetIdentifier(m_DepthRTid);
 
     RenderTargetIdentifier[] mRTIDs = new RenderTargetIdentifier[2];
-
+    public static event Action<Camera, ScriptableRenderContext, RenderTargetIdentifier, RenderTextureDescriptor, CommandBuffer> myDebug;
+    public static void MyDebug(Camera camera, ScriptableRenderContext context, RenderTargetIdentifier RTid, RenderTextureDescriptor Desc, CommandBuffer cmd)
+    {
+        myDebug?.Invoke(camera, context, RTid, Desc, cmd);
+    }
     public SRP0803Instance()
     {
         copyColorMaterial = new Material(Shader.Find("Hidden/CustomSRP/SRP0803/copyColor"))
@@ -71,7 +78,12 @@ public class SRP0803Instance : RenderPipeline
             rtDesc.sRGB = (QualitySettings.activeColorSpace == ColorSpace.Linear);
             rtDesc.msaaSamples = 1;
             rtDesc.enableRandomWrite = false;
-
+            RenderTextureDescriptor rtDesc2 = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
+            rtDesc2.graphicsFormat = m_ColorFormat;
+            rtDesc2.depthBufferBits = 0;
+            rtDesc2.sRGB = (QualitySettings.activeColorSpace == ColorSpace.Linear);
+            rtDesc2.msaaSamples = 1;
+            rtDesc2.enableRandomWrite = false;
             //Texture Descriptor - Depth
             RenderTextureDescriptor rtDescDepth = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
             rtDescDepth.colorFormat = RenderTextureFormat.Depth;
@@ -81,12 +93,18 @@ public class SRP0803Instance : RenderPipeline
 
             //Get Temp Texture for Color Texture
             CommandBuffer cmdTempId = new CommandBuffer();
-            cmdTempId.name = "("+camera.name+")"+ "Setup TempRT";
+            cmdTempId.name = "("+camera.name+")"+ "Setup TempRT!!!!!!!!!!!!!!!!!!!!!!!!";
             cmdTempId.GetTemporaryRT(m_AlbedoRTid, rtDesc,FilterMode.Point);
-            cmdTempId.GetTemporaryRT(m_EmissionRTid, rtDesc,FilterMode.Point);
+            cmdTempId.GetTemporaryRT(m_EmissionRTid, rtDesc,FilterMode.Point); 
+          
             cmdTempId.GetTemporaryRT(m_DepthRTid, rtDescDepth,FilterMode.Point);
+   
             context.ExecuteCommandBuffer(cmdTempId);
+            //MyDebug(camera, context, m_DepthRTid, rtDesc, null);
             cmdTempId.Release();
+
+         
+
 
             //Setup DrawSettings and FilterSettings
             var sortingSettings = new SortingSettings(camera);
@@ -101,11 +119,13 @@ public class SRP0803Instance : RenderPipeline
             mRTIDs[1] = m_EmissionRTid;
             cmdPass1.SetRenderTarget(mRTIDs,m_DepthRT);
             cmdPass1.ClearRenderTarget(true, true, Color.black);
+           
             context.ExecuteCommandBuffer(cmdPass1);
+
             cmdPass1.Release();
 
             //Skybox
-            if(drawSkyBox)  {  context.DrawSkybox(camera);  }
+            if (drawSkyBox)  {  context.DrawSkybox(camera);  }
 
             //Opaque objects
             sortingSettings.criteria = SortingCriteria.CommonOpaque;
@@ -120,11 +140,20 @@ public class SRP0803Instance : RenderPipeline
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
 
             //Final blit====================================================
+            //debug
+            CommandBuffer debugCMD = new CommandBuffer();
+            debugCMD.name = "DEBUGCMD";
+            debugCMD.GetTemporaryRT(m_EmissionRTid2, rtDesc2, FilterMode.Point);
+            // MyDebug(camera, context, m_EmissionRT2, rtDesc2, debugCMD);
+            context.ExecuteCommandBuffer(debugCMD);
+            debugCMD.Release();
 
             //Blit to CameraTarget, to combine the previous 2 texture results with a blit material
             CommandBuffer cmd = new CommandBuffer();
             cmd.name = "Cam:"+camera.name+" BlitToCamera";
             cmd.Blit(BuiltinRenderTextureType.CameraTarget,BuiltinRenderTextureType.CameraTarget,copyColorMaterial);
+
+            MyDebug(camera, context, m_EmissionRTid2, rtDesc, null);
             context.ExecuteCommandBuffer(cmd);
             cmd.Release(); 
 
@@ -134,6 +163,7 @@ public class SRP0803Instance : RenderPipeline
             cmdclean.ReleaseTemporaryRT(m_AlbedoRTid);
             cmdclean.ReleaseTemporaryRT(m_EmissionRTid);
             cmdclean.ReleaseTemporaryRT(m_DepthRTid);
+            cmdclean.ReleaseTemporaryRT(m_EmissionRTid2);
             context.ExecuteCommandBuffer(cmdclean);
             cmdclean.Release();
 

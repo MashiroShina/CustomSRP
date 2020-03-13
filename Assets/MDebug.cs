@@ -8,6 +8,8 @@ public class MDebug : MonoBehaviour
 {
     void OnEnable()
     {
+        SRP0803Instance.myDebug += MyDebug;
+        SRP0703Instance.myDebug += MyDebug;
         SRP0701Instance.afterSkybox += MyAfterSkybox;
         SRP0701Instance.afterOpaqueObject += MyAfterOpaque;
         SRP0701Instance.afterTransparentObject += MyAfterTransparent;
@@ -34,6 +36,10 @@ public class MDebug : MonoBehaviour
 
     private void CleanUp()
     {
+        SRP0803Instance.myDebug -= MyDebug;
+
+        SRP0703Instance.myDebug -= MyDebug;
+
         SRP0702Instance.myDebug -= MyDebug;
         SRP0702Instance.afterSkybox -= MyAfterSkybox;
         SRP0702Instance.afterOpaqueObject -= MyAfterOpaque;
@@ -92,6 +98,10 @@ public class MDebug : MonoBehaviour
     }
     private void OnGUI()
     {
-        GUI.DrawTexture(new Rect(0, 0, 256, 256), debugRT, ScaleMode.ScaleToFit, false, 1);
+        if (debugRT!=null)
+        {
+            GUI.DrawTexture(new Rect(0, 0, 256, 256), debugRT, ScaleMode.ScaleToFit, false, 1);
+        }
+    
     }
 }

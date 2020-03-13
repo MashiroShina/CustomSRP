@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -25,6 +26,7 @@ public class SRP0703 : RenderPipelineAsset
 
 public class SRP0703Instance : RenderPipeline
 {
+    public static event Action<Camera, ScriptableRenderContext, RenderTargetIdentifier, RenderTextureDescriptor, CommandBuffer> myDebug;
     private bool _motionVectorDebug;
 
     private static readonly ShaderTagId m_PassName = new ShaderTagId("SRP0703_Pass"); //The shader pass tag just for SRP0703
@@ -51,6 +53,7 @@ public class SRP0703Instance : RenderPipeline
     private Matrix4x4 _NonJitteredVP;
     private Matrix4x4 _PreviousVP;
     static Mesh s_FullscreenMesh = null;
+
     public static Mesh fullscreenMesh
     {
         get
@@ -91,8 +94,12 @@ public class SRP0703Instance : RenderPipeline
 
         _motionVectorDebug = motionVectorDebug;
         motionVectorDebugMaterial = new Material(Shader.Find("MotionVectorsDebug"));
-    }
 
+    }
+    public static void MyDebug(Camera camera, ScriptableRenderContext context, RenderTargetIdentifier RTid, RenderTextureDescriptor Desc, CommandBuffer cmd)
+    {
+        myDebug?.Invoke(camera, context, RTid, Desc, cmd);
+    }
     protected override void Render(ScriptableRenderContext context, Camera[] cameras)
     {
         BeginFrameRendering(context,cameras);
@@ -135,7 +142,7 @@ public class SRP0703Instance : RenderPipeline
             depthRTDesc.colorFormat = RenderTextureFormat.Depth;
             depthRTDesc.depthBufferBits = depthBufferBits;
             cmdTempId.GetTemporaryRT(m_DepthRTid, depthRTDesc,FilterMode.Bilinear);
-
+            
             //MotionVector
             RenderTextureDescriptor motionvectorRTDesc = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
             motionvectorRTDesc.graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16_SFloat;
@@ -144,8 +151,9 @@ public class SRP0703Instance : RenderPipeline
             motionvectorRTDesc.msaaSamples = 1;
             motionvectorRTDesc.enableRandomWrite = false;
             cmdTempId.GetTemporaryRT(m_MotionVectorRTid, motionvectorRTDesc,FilterMode.Bilinear);
-
+           
             context.ExecuteCommandBuffer(cmdTempId);
+       
             cmdTempId.Release();
 
            //************************** Setup DrawSettings and FilterSettings ************************************
@@ -230,7 +238,7 @@ public class SRP0703Instance : RenderPipeline
             CommandBuffer cmdMotionVectorTexture = new CommandBuffer();
             cmdMotionVectorTexture.name = "("+camera.name+")"+ "MotionVector Texture";            
             cmdMotionVectorTexture.SetGlobalTexture(m_MotionVectorRTid,m_MotionVectorRT);
-            context.ExecuteCommandBuffer(cmdMotionVectorTexture);
+           context.ExecuteCommandBuffer(cmdMotionVectorTexture);
             cmdMotionVectorTexture.Release();
 
             //************************** Rendering color ************************************
@@ -327,9 +335,14 @@ public class SRP0703Instance : RenderPipeline
             if(_motionVectorDebug)
             {
                 CommandBuffer cmdDebug = new CommandBuffer();
+                RenderTexture rt;
+                rt = new RenderTexture(colorRTDesc);
                 cmdDebug.Blit(BuiltinRenderTextureType.CameraTarget,BuiltinRenderTextureType.CameraTarget,motionVectorDebugMaterial);
+                cmdDebug.Blit(BuiltinRenderTextureType.CameraTarget, rt, motionVectorDebugMaterial);
+                //MyDebug(camera, context, rt, colorRTDesc, cmdDebug);
                 context.ExecuteCommandBuffer(cmdDebug);
                 cmdDebug.Release();
+                rt.Release();
             }
 
             //************************** Clean Up ************************************

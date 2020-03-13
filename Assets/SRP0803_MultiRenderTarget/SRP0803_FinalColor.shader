@@ -41,14 +41,15 @@
 			CBUFFER_START(UnityPerMaterial)
 			sampler2D _CameraAlbedoTexture;
 			sampler2D _CameraEmissionTexture;
+			sampler2D _CameraEmissionTexture2;
 			CBUFFER_END
 
 			float4 frag (v2f i) : SV_Target
 			{
 				float4 albedo = tex2D(_CameraAlbedoTexture, i.uv);
 				float4 emission = tex2D(_CameraEmissionTexture, i.uv);
-
-				return albedo + emission;
+				float4 emission2 =  tex2D(_CameraEmissionTexture2,i.uv);
+				return albedo + emission+emission2;
 			}
 			ENDHLSL
         }

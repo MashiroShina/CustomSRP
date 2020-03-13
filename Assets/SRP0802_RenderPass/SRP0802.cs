@@ -35,7 +35,7 @@ public class SRP0802Instance : RenderPipeline
     AttachmentDescriptor m_Emission = new AttachmentDescriptor(m_ColorFormat);
     AttachmentDescriptor m_Output = new AttachmentDescriptor(m_ColorFormat);
     AttachmentDescriptor m_Depth = new AttachmentDescriptor(RenderTextureFormat.Depth);
-
+    AttachmentDescriptor m_Color = new AttachmentDescriptor(m_ColorFormat);
     public SRP0802Instance()
     {
     }
@@ -85,16 +85,19 @@ public class SRP0802Instance : RenderPipeline
             FilteringSettings filterSettings = new FilteringSettings(RenderQueueRange.all);
 
             //Native Arrays for Attachaments
-            NativeArray<AttachmentDescriptor> renderPassAttachments = new NativeArray<AttachmentDescriptor>(4, Allocator.Temp);
+            NativeArray<AttachmentDescriptor> renderPassAttachments = new NativeArray<AttachmentDescriptor>(5, Allocator.Temp);
             renderPassAttachments[0] = m_Albedo;
             renderPassAttachments[1] = m_Emission;
-            renderPassAttachments[2] = m_Output;
-            renderPassAttachments[3] = m_Depth;
-            NativeArray<int> renderPassColorAttachments = new NativeArray<int>(2, Allocator.Temp);
+            renderPassAttachments[2] = m_Color;
+            renderPassAttachments[3] = m_Output;
+            renderPassAttachments[4] = m_Depth;
+           
+            NativeArray<int> renderPassColorAttachments = new NativeArray<int>(3, Allocator.Temp);
             renderPassColorAttachments[0] = 0;
             renderPassColorAttachments[1] = 1;
+            renderPassColorAttachments[2] = 2;
             NativeArray<int> renderPassOutputAttachments = new NativeArray<int>(1, Allocator.Temp);
-            renderPassOutputAttachments[0] = 2;
+            renderPassOutputAttachments[0] = 3;
 
             //Clear Attachements
             m_Output.ConfigureTarget(m_ColorRT, false, true);
@@ -102,9 +105,10 @@ public class SRP0802Instance : RenderPipeline
             m_Albedo.ConfigureClear(camera.backgroundColor,1,0);
             m_Emission.ConfigureClear(new Color(0.0f, 0.0f, 0.0f, 0.0f),1,0);
             m_Depth.ConfigureClear(new Color(),1,0);
-            
+            m_Color.ConfigureClear(new Color(0.0f, 0.0f, 0.0f, 0.0f), 1, 0);
+
             //More clean to use ScopedRenderPass instead of BeginRenderPass+EndRenderPass
-            using ( context.BeginScopedRenderPass(camera.pixelWidth, camera.pixelHeight,1,renderPassAttachments, 3) )
+            using ( context.BeginScopedRenderPass(camera.pixelWidth, camera.pixelHeight,1,renderPassAttachments, 4) )
             {
                 //Output to Albedo & Emission
                 using ( context.BeginScopedSubPass(renderPassColorAttachments,false) )

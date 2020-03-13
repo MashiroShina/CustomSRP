@@ -35,6 +35,7 @@
 			{
 				float4 Albedo : SV_Target0;
 				float4 Emission : SV_Target1;
+				float4 MColor : SV_TARGET2;
 			};
 
 			CBUFFER_START(UnityPerMaterial)
@@ -58,7 +59,7 @@
 				o.Emission = frac(float4(_Time.x, _Time.y, _Time.z, _Time.w));
 				o.Emission.xy *= i.uv;
 				o.Emission.zw *= i.uv;
-
+				o.MColor = float4(1,0,0,0);
 				o.Emission = 1-o.Emission; //just want a different color for transparent objects..
 
 				return o;
@@ -95,13 +96,13 @@
 			
 			UNITY_DECLARE_FRAMEBUFFER_INPUT_FLOAT(0);
 			UNITY_DECLARE_FRAMEBUFFER_INPUT_FLOAT(1);
-
+			UNITY_DECLARE_FRAMEBUFFER_INPUT_FLOAT(2);
 			float4 frag (v2f i) : SV_Target
 			{
 				float4 albedo = UNITY_READ_FRAMEBUFFER_INPUT(0, i.vertex.xyz);
 				float4 emission = UNITY_READ_FRAMEBUFFER_INPUT(1, i.vertex.xyz);
-
-				return albedo + emission;
+				float4 color = UNITY_READ_FRAMEBUFFER_INPUT(2, i.vertex.xyz);
+				return albedo*color*100 + emission;
 			}
 			ENDHLSL
 		}
