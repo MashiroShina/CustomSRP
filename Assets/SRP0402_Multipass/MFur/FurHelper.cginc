@@ -1,7 +1,7 @@
 #ifndef FurHelper
 #define FurHelper
 #pragma target 3.0
-
+#pragma multi_compile_instancing
             
             #include "UnityCG.cginc"
 			#include "UnityPBSLighting.cginc"
@@ -9,7 +9,7 @@
             #pragma multi_compile_fwdadd_fullshadows
 			#include "Lighting.cginc" 
 			#include "AutoLight.cginc"
-
+            
 struct v2f
 {
     float4 pos: SV_POSITION;
@@ -17,11 +17,13 @@ struct v2f
     float3 worldNormal: TEXCOORD1;
     float3 worldPos: TEXCOORD2;
     SHADOW_COORDS(3)
+    UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
-CBUFFER_START(UnityPerMaterial)
+UNITY_INSTANCING_BUFFER_START(MyInst)
 
-    fixed4 _Color;
+    UNITY_DEFINE_INSTANCED_PROP(fixed4,_Color)
+    //fixed4 _Color;
     fixed4 _Specular;
     half _FurShininess;
     half _ShadowRange;
@@ -50,11 +52,13 @@ CBUFFER_START(UnityPerMaterial)
     fixed4 _RimColor;
     half _RimPower;
 
-CBUFFER_END
+UNITY_INSTANCING_BUFFER_END(MyInst)
 
 v2f vert_surface(appdata_base v)
 {
     v2f o;
+    UNITY_SETUP_INSTANCE_ID(v);
+    UNITY_TRANSFER_INSTANCE_ID(v, o);
     /*v.vertex.x += abs( sin(v.vertex.z * _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y;
     v.vertex.z += abs( cos(v.vertex.y * _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y;*/
 
@@ -69,6 +73,8 @@ v2f vert_surface(appdata_base v)
 v2f vert_base(appdata_base v)
 {
     v2f o;
+    UNITY_SETUP_INSTANCE_ID(v);
+    UNITY_TRANSFER_INSTANCE_ID(v, o);
     v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
     v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
 
@@ -93,7 +99,7 @@ fixed4 frag_surface(v2f i): SV_Target
     fixed3 worldHalf = normalize(worldView + worldLight);
     fixed shadow = SHADOW_ATTENUATION(i);  
     //clip(texColor.a - _Cutoff);
-    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * UNITY_ACCESS_INSTANCED_PROP(MyInst,_Color);
     fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo*_AOColor;
     fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
     fixed3 lightting = saturate(dot(worldNormal, worldLight));
@@ -113,7 +119,7 @@ fixed4 frag_base(v2f i): SV_Target
     fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
     fixed3 worldHalf = normalize(worldView + worldLight);
     
-    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * UNITY_ACCESS_INSTANCED_PROP(MyInst,_Color);
     albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
     half rim = 1.0 - saturate(dot(worldView, worldNormal));
     albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);

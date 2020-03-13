@@ -32,7 +32,7 @@ public class SRP0603Instance : RenderPipeline
 
     private static RenderTargetIdentifier m_DepthRT = new RenderTargetIdentifier(m_DepthRTid);
     private static RenderTargetIdentifier m_ShadowMapLight = new RenderTargetIdentifier(m_ShadowMapLightid);
-    private static RenderTargetIdentifier m_ShadowMap = new RenderTargetIdentifier(m_ShadowMapid);
+    private static RenderTargetIdentifier m_ShadowMap = new RenderTargetIdentifier(m_ShadowMapid);//以shader中的_ShadowMapTexture创建一个RT标识
 
     public static Material m_ScreenSpaceShadowsMaterial;
 
@@ -169,7 +169,12 @@ public class SRP0603Instance : RenderPipeline
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+//           MDEBUG
+//             CommandBuffer cmdDebug = new CommandBuffer();
+//             cmdDebug.name = "Debug";
+//             cmdDebug.Blit( m_DepthRTid, BuiltinRenderTextureType.CameraTarget );
+//             context.ExecuteCommandBuffer(cmdDebug);
+//             cmdDebug.Release();
             //Clean Up
             CommandBuffer cmdclean = new CommandBuffer();
             cmdclean.name = "("+camera.name+")"+ "Clean Up";

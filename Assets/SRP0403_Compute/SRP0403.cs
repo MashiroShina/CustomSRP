@@ -13,18 +13,21 @@ namespace SRP0403
 
         private static int m_ColorRTid = Shader.PropertyToID("_CameraColorTexture");
         private static RenderTargetIdentifier m_ColorRT = new RenderTargetIdentifier(m_ColorRTid);
-        private static UnityEngine.Experimental.Rendering.GraphicsFormat m_ColorFormat = SystemInfo.GetGraphicsFormat(UnityEngine.Experimental.Rendering.DefaultFormat.LDR);
+        private static UnityEngine.Experimental.Rendering.GraphicsFormat m_ColorFormat =
+            SystemInfo.GetGraphicsFormat(UnityEngine.Experimental.Rendering.DefaultFormat.LDR);
 
         private static Material depthOnlyMaterial;
         private static int m_DepthRTid = Shader.PropertyToID("_CameraDepthTexture");
         private static RenderTargetIdentifier m_DepthRT = new RenderTargetIdentifier(m_DepthRTid);
         private int depthBufferBits = 24;
-
+        private static int DebugTexture = Shader.PropertyToID("DebugId");
+        private static RenderTargetIdentifier DebugIdt=new RenderTargetIdentifier(DebugTexture);
+        private RenderTexture DebugRT;
         public SRP0403(SRP0403_Asset pipelineAsset)
         {
             m_PipelineAsset = pipelineAsset;
             //if(m_PipelineAsset.computeShader != null) _kernel = m_PipelineAsset.computeShader.FindKernel ("CSMain");
-            _kernel = 0;
+            _kernel = m_PipelineAsset.computeShader.FindKernel ("CSMain");//OR 0
             depthOnlyMaterial = new Material(Shader.Find("Hidden/CustomSRP/SRP0403/DepthOnly"));
         }
 
@@ -62,10 +65,10 @@ namespace SRP0403
                 RenderTextureDescriptor depthRTDesc = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
                 depthRTDesc.colorFormat = RenderTextureFormat.Depth;
                 depthRTDesc.depthBufferBits = depthBufferBits;
-
                 //Set texture temp RT
                 CommandBuffer cmdTempId = new CommandBuffer();
-                cmdTempId.name = "("+camera.name+")"+ "Setup TempRT";
+               
+                cmdTempId.name = "("+camera.name+")"+ "Setup TempRT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
                 cmdTempId.GetTemporaryRT(m_ColorRTid, colorRTDesc,FilterMode.Bilinear);
                 cmdTempId.GetTemporaryRT(m_DepthRTid, depthRTDesc,FilterMode.Bilinear);
                 context.ExecuteCommandBuffer(cmdTempId);
@@ -86,10 +89,17 @@ namespace SRP0403
                 CommandBuffer cmdDepth = new CommandBuffer();
                 cmdDepth.name = "("+camera.name+")"+ "Depth Clear Flag";
                 cmdDepth.SetRenderTarget(m_DepthRT); //Set CameraTarget to the depth texture
-                cmdDepth.ClearRenderTarget(true, true, Color.black);
+                cmdDepth.ClearRenderTarget(true, true, Color.black);//这里不是移除renderTarget而是清空其RT上的颜色
                 context.ExecuteCommandBuffer(cmdDepth);
+                     
+                //DebugRT-------------------------------------
+                DebugRT = RenderTexture.GetTemporary(depthRTDesc);
+                cmdDepth.CopyTexture(m_ColorRT,DebugIdt);
+                //--------------------------------------------
+
                 cmdDepth.Release();
 
+                
                 //Draw Depth with Opaque objects
                 sortingSettings.criteria = SortingCriteria.CommonOpaque;
                 drawSettingsDepth.sortingSettings = sortingSettings;

@@ -37,7 +37,7 @@
 			
 			float4 frag (v2f i) : SV_Target
 			{
-				return 1;
+				return float4(0,1,0,1);
 			}
 			ENDHLSL
 		}

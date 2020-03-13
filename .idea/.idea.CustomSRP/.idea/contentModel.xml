@@ -23,6 +23,7 @@
           <e p="InfinityRenderPipelineIDs.cs" t="Include" />
           <e p="MUnlit.shader" t="Include" />
         </e>
+        <e p="MDebug.cs" t="Include" />
         <e p="SRP0101_Basic" t="Include">
           <e p="SRP0101.cs" t="Include" />
           <e p="SRP0101_UnlitOpaque.shader" t="Include" />
@@ -102,6 +103,7 @@
           <e p="DrawInstancedIndirect.shader" t="Include" />
           <e p="SRP0404.cs" t="Include" />
           <e p="SRP0404_Asset.cs" t="Include" />
+          <e p="SUBMesh.cs" t="Include" />
         </e>
         <e p="SRP0405_Callback" t="Include">
           <e p="CallbackTest.cs" t="Include" />

@@ -80,7 +80,8 @@ public class SRP0502Instance : RenderPipeline
 
             //Camera clear flag
             CommandBuffer cmd = new CommandBuffer();
-            cmd.ClearRenderTarget(clearDepth, clearColor, camera.backgroundColor);
+            cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
+            cmd.ClearRenderTarget(true, true, Color.blue);
             context.ExecuteCommandBuffer(cmd);
             cmd.Release();
 
@@ -104,6 +105,7 @@ public class SRP0502Instance : RenderPipeline
             cmdBlitToTex.name = "("+camera.name+")"+ "Blit to Color Texture";
             cmdBlitToTex.Blit(BuiltinRenderTextureType.CameraTarget,m_ColorRT);
             cmdBlitToTex.SetGlobalTexture(m_ColorRTid,m_ColorRT);
+            //cmdBlitToTex.Blit(m_ColorRTid,BuiltinRenderTextureType.CameraTarget);
             cmdBlitToTex.SetRenderTarget(BuiltinRenderTextureType.CameraTarget); //Blit will change target, so make sure to reset it
             context.ExecuteCommandBuffer(cmdBlitToTex);
             cmdBlitToTex.Release();

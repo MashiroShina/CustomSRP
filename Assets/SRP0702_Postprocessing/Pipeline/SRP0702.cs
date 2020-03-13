@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.PostProcessing;
+using System;
 
 [ExecuteInEditMode]
 public class SRP0702 : RenderPipelineAsset
@@ -34,6 +35,34 @@ public class SRP0702Instance : RenderPipeline
     private static UnityEngine.Experimental.Rendering.GraphicsFormat m_ColorFormat = SystemInfo.GetGraphicsFormat(UnityEngine.Experimental.Rendering.DefaultFormat.LDR);
     private static UnityEngine.Experimental.Rendering.GraphicsFormat m_ColorFormatActive; //The one that is actually using
     private int depthBufferBits = 24;
+    
+    
+    //Custom callbacks
+    public static event Action<Camera,ScriptableRenderContext> afterSkybox;
+    public static event Action<Camera,ScriptableRenderContext> afterOpaqueObject;
+    public static event Action<Camera,ScriptableRenderContext,RenderTargetIdentifier,RenderTextureDescriptor> afterTransparentObject;
+    public static event Action<Camera,ScriptableRenderContext,RenderTargetIdentifier,RenderTextureDescriptor,CommandBuffer> myDebug;
+    
+    public static void AfterSkybox(Camera camera, ScriptableRenderContext context)
+    {
+        afterSkybox?.Invoke(camera,context);
+    }
+    
+    public static void AfterOpaqueObject(Camera camera, ScriptableRenderContext context)
+    {
+        afterOpaqueObject?.Invoke(camera,context);
+    }
+
+    
+    public static void AfterTransparentObject(Camera camera, ScriptableRenderContext context,RenderTargetIdentifier RTid,RenderTextureDescriptor Desc)
+    {
+        afterTransparentObject?.Invoke(camera,context,RTid,Desc);
+    }
+
+    public static void MyDebug(Camera camera, ScriptableRenderContext context,RenderTargetIdentifier RTid,RenderTextureDescriptor Desc,CommandBuffer cmd)
+    {
+        myDebug?.Invoke(camera,context,RTid,Desc,cmd);
+    }
 
     public SRP0702Instance()
     {
@@ -81,8 +110,7 @@ public class SRP0702Instance : RenderPipeline
             RenderTextureDescriptor depthRTDesc = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
             depthRTDesc.colorFormat = RenderTextureFormat.Depth;
             depthRTDesc.depthBufferBits = depthBufferBits;
-            cmdTempId.GetTemporaryRT(m_DepthRTid, depthRTDesc,FilterMode.Bilinear);
-
+            cmdTempId.GetTemporaryRT(m_DepthRTid, depthRTDesc,FilterMode.Bilinear);    
             context.ExecuteCommandBuffer(cmdTempId);
             cmdTempId.Release();
 
@@ -104,8 +132,11 @@ public class SRP0702Instance : RenderPipeline
             CommandBuffer cmdDepth = new CommandBuffer();
             cmdDepth.name = "("+camera.name+")"+ "Depth Clear Flag";
             cmdDepth.SetRenderTarget(m_DepthRT); //Set CameraTarget to the depth texture
+            
             cmdDepth.ClearRenderTarget(true, true, Color.black);
+            //MyDebug(camera,context,m_DepthRT,colorRTDesc,null);
             context.ExecuteCommandBuffer(cmdDepth);
+            //MyDebug(camera,context,m_DepthRT,colorRTDesc,null);
             cmdDepth.Release();
 
             //Opaque objects
@@ -119,6 +150,7 @@ public class SRP0702Instance : RenderPipeline
             cmdDepthTexture.name = "("+camera.name+")"+ "Depth Texture";
             cmdDepthTexture.SetGlobalTexture(m_DepthRTid,m_DepthRT);
             context.ExecuteCommandBuffer(cmdDepthTexture);
+            //MyDebug(camera,context,m_DepthRT,colorRTDesc,null);
             cmdDepthTexture.Release();
 
             //************************** Rendering colors ************************************
@@ -129,18 +161,20 @@ public class SRP0702Instance : RenderPipeline
             cmd.SetRenderTarget(m_ColorRT); //Set CameraTarget to the color texture
             cmd.ClearRenderTarget(clearDepth, clearColor, camera.backgroundColor);
             context.ExecuteCommandBuffer(cmd);
+            //MyDebug(camera,context,m_ColorRT,colorRTDesc,null);
             cmd.Release();
 
             //Skybox
             if(drawSkyBox)  {  context.DrawSkybox(camera);  }
 
+            AfterSkybox(camera, context);
             //************************** Rendering Opaque Objects ************************************
 
             sortingSettings.criteria = SortingCriteria.CommonOpaque;
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+            AfterOpaqueObject(camera,context);
             //************************** SetUp Post-processing ************************************
             
             PostProcessLayer m_CameraPostProcessLayer = camera.GetComponent<PostProcessLayer>();
@@ -169,7 +203,7 @@ public class SRP0702Instance : RenderPipeline
                 m_PostProcessRenderContext.sourceFormat = UnityEngine.Experimental.Rendering.GraphicsFormatUtility.GetRenderTextureFormat(m_ColorFormatActive);
                 m_PostProcessRenderContext.destination = m_ColorRT;
                 m_PostProcessRenderContext.command = cmdpp;
-                m_PostProcessRenderContext.flip = camera.targetTexture == null;
+                m_PostProcessRenderContext.flip = camera.targetTexture == null;//是否反转画面
                 m_CameraPostProcessLayer.RenderOpaqueOnly(m_PostProcessRenderContext);
                
                 context.ExecuteCommandBuffer(cmdpp);
@@ -182,7 +216,7 @@ public class SRP0702Instance : RenderPipeline
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+            AfterTransparentObject(camera,context,m_DepthRTid,depthRTDesc);
             //************************** Transparent Post-processing ************************************
             //Bloom, Vignette, Grain, ColorGrading, LensDistortion, Chromatic Aberration, Auto Exposure
             if(usePostProcessing)
@@ -209,6 +243,7 @@ public class SRP0702Instance : RenderPipeline
                 CommandBuffer cmdBlitToCam = new CommandBuffer();
                 cmdBlitToCam.name = "("+camera.name+")"+ "Blit back to Camera";
                 cmdBlitToCam.Blit(m_ColorRTid, BuiltinRenderTextureType.CameraTarget);
+                //MDebug.MyDebug();
                 context.ExecuteCommandBuffer(cmdBlitToCam);
                 cmdBlitToCam.Release();
             }

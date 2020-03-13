@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -29,9 +30,35 @@ public class SRP0701Instance : RenderPipeline
     private static UnityEngine.Experimental.Rendering.GraphicsFormat m_ColorFormatHDR = SystemInfo.GetGraphicsFormat(UnityEngine.Experimental.Rendering.DefaultFormat.HDR);
     private static UnityEngine.Experimental.Rendering.GraphicsFormat m_ColorFormat = SystemInfo.GetGraphicsFormat(UnityEngine.Experimental.Rendering.DefaultFormat.LDR);
     private int depthBufferBits = 24; //16 won't have stencil
-
+    private RenderTextureDescriptor debugRTDesc;
+    
+    //Custom callbacks
+    public static event Action<Camera,ScriptableRenderContext> afterSkybox;
+    public static event Action<Camera,ScriptableRenderContext> afterOpaqueObject;
+    public static event Action<Camera,ScriptableRenderContext,RenderTargetIdentifier,RenderTextureDescriptor> afterTransparentObject;
+    public static event Action<Camera,ScriptableRenderContext,RenderTargetIdentifier,RenderTextureDescriptor,CommandBuffer> myDebug;
     public SRP0701Instance()
     {
+    }
+    public static void AfterSkybox(Camera camera, ScriptableRenderContext context)
+    {
+        afterSkybox?.Invoke(camera,context);
+    }
+
+    public static void AfterOpaqueObject(Camera camera, ScriptableRenderContext context)
+    {
+        afterOpaqueObject?.Invoke(camera,context);
+    }
+
+    
+    public static void AfterTransparentObject(Camera camera, ScriptableRenderContext context,RenderTargetIdentifier RTid,RenderTextureDescriptor Desc)
+    {
+        afterTransparentObject?.Invoke(camera,context,RTid,Desc);
+    }
+
+    public static void MyDebug(Camera camera, ScriptableRenderContext context,RenderTargetIdentifier RTid,RenderTextureDescriptor Desc,CommandBuffer cmd)
+    {
+        myDebug?.Invoke(camera,context,RTid,Desc,cmd);
     }
 
     protected override void Render(ScriptableRenderContext context, Camera[] cameras)
@@ -68,17 +95,21 @@ public class SRP0701Instance : RenderPipeline
             colorRTDesc.msaaSamples = camera.allowMSAA ? QualitySettings.antiAliasing : 1;
             colorRTDesc.enableRandomWrite = false;
             cmdTempId.GetTemporaryRT(m_ColorRTid, colorRTDesc,FilterMode.Bilinear);
-
+            debugRTDesc = colorRTDesc;
+            
             context.ExecuteCommandBuffer(cmdTempId);
+            
             cmdTempId.Release();
 
+            
+            
             //************************** End Set TempRT ************************************
-
             
             //Set RenderTarget & Camera clear flag
             CommandBuffer cmd = new CommandBuffer();
             cmd.SetRenderTarget(m_ColorRT); //Set CameraTarget to the color texture
             cmd.ClearRenderTarget(clearDepth, clearColor, camera.backgroundColor);
+            MyDebug(camera,context,m_ColorRT,debugRTDesc,null);
             context.ExecuteCommandBuffer(cmd);
             cmd.Release();
 
@@ -86,26 +117,34 @@ public class SRP0701Instance : RenderPipeline
             var sortingSettings = new SortingSettings(camera);
             DrawingSettings drawSettings = new DrawingSettings(m_PassName, sortingSettings);
             FilteringSettings filterSettings = new FilteringSettings(RenderQueueRange.all);
-
+ 
             //Skybox
             if(drawSkyBox)  {  context.DrawSkybox(camera);  }
 
+            AfterSkybox(camera, context);
+            
             //Opaque objects
             sortingSettings.criteria = SortingCriteria.CommonOpaque;
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+            //Callback
+            AfterOpaqueObject(camera,context);
+            
             //Transparent objects
             sortingSettings.criteria = SortingCriteria.CommonTransparent;
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+            
             //Blit the content back to screen
             CommandBuffer cmdBlitToCam = new CommandBuffer();
             cmdBlitToCam.name = "("+camera.name+")"+ "Blit back to Camera";
             cmdBlitToCam.Blit(m_ColorRTid, BuiltinRenderTextureType.CameraTarget);
+            //Callback
+            AfterTransparentObject(camera,context,m_ColorRT,debugRTDesc);
+            
+            
             context.ExecuteCommandBuffer(cmdBlitToCam);
             cmdBlitToCam.Release();
 

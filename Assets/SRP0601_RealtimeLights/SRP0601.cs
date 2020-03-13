@@ -110,7 +110,7 @@ public class SRP0601Instance : RenderPipeline
 
             if( i >= cull.visibleLights.Length ) continue;
             VisibleLight light = cull.visibleLights[i];
-            
+
             if (light.lightType == LightType.Directional)
             {
                 lightData[i] = light.localToWorldMatrix.MultiplyVector(Vector3.back);

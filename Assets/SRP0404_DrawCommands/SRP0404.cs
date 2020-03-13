@@ -7,7 +7,7 @@ namespace SRP0404
     public class SRP0404 : RenderPipeline
     {
         private static SRP0404_Asset m_PipelineAsset;
-        private static readonly ShaderTagId m_PassName = new ShaderTagId("SRP0404_Pass"); //The shader pass tag just for SRP0404
+        private static readonly ShaderTagId m_PassName = new ShaderTagId("SRP0403_Pass"); //The shader pass tag just for SRP0404
 
         private List<Vector4> positions;
         private ComputeBuffer positionBuffer;
@@ -72,7 +72,7 @@ namespace SRP0404
 
                 //SetUp Position Computebuffers Data
                 positionBuffer = new ComputeBuffer(m_PipelineAsset.count, 16); //4*4 bytes for Vector4
-                positionBuffer.SetData(positions);
+                positionBuffer.SetData(positions);//vector4 16
                 m_MaterialPropertyBlock.SetBuffer("positionBuffer", positionBuffer);
 
                 //SetUp Args Computebuffers Data
@@ -88,6 +88,12 @@ namespace SRP0404
                 cmdDraw.DrawMeshInstancedIndirect(m_PipelineAsset.mesh,0,m_PipelineAsset.mat,0,argsBuffer,0,m_MaterialPropertyBlock);
                 context.ExecuteCommandBuffer(cmdDraw);
                 cmdDraw.Release();
+                
+                
+                sortingSettings.criteria = SortingCriteria.CommonOpaque;
+                drawSettings.sortingSettings = sortingSettings;
+                filterSettings.renderQueueRange = RenderQueueRange.opaque;
+                context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
 
                 context.Submit();
 

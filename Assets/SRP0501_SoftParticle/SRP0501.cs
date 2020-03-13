@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using System;
 
 [ExecuteInEditMode]
 public class SRP0501 : RenderPipelineAsset
@@ -29,11 +30,35 @@ public class SRP0501Instance : RenderPipeline
     private static RenderTargetIdentifier m_DepthRT = new RenderTargetIdentifier(m_DepthRTid);
     private int depthBufferBits = 24;
 
+    
+    
+    //Custom callbacks
+    public static event Action<Camera,ScriptableRenderContext> afterSkybox;
+    public static event Action<Camera,ScriptableRenderContext> afterOpaqueObject;
+    public static event Action<Camera,ScriptableRenderContext,RenderTargetIdentifier,RenderTextureDescriptor> afterTransparentObject;
+    public static event Action<Camera,ScriptableRenderContext,RenderTargetIdentifier,RenderTextureDescriptor,CommandBuffer> myDebug;
     public SRP0501Instance()
     {
         depthOnlyMaterial = new Material(Shader.Find("Hidden/CustomSRP/SRP0501/DepthOnly"));
     }
+    public static void AfterSkybox(Camera camera, ScriptableRenderContext context)
+    {
+        afterSkybox?.Invoke(camera,context);
+    }
 
+    public static void AfterOpaqueObject(Camera camera, ScriptableRenderContext context)
+    {
+        afterOpaqueObject?.Invoke(camera,context);
+    }
+
+    public static void AfterTransparentObject(Camera camera, ScriptableRenderContext context,RenderTargetIdentifier RTid,RenderTextureDescriptor Desc)
+    {
+        afterTransparentObject?.Invoke(camera,context,RTid,Desc);
+    }
+    public static void MyDebug(Camera camera, ScriptableRenderContext context,RenderTargetIdentifier RTid,RenderTextureDescriptor Desc,CommandBuffer cmd)
+    {
+        myDebug?.Invoke(camera,context,RTid,Desc,cmd);
+    }
     protected override void Render(ScriptableRenderContext context, Camera[] cameras)
     {
         BeginFrameRendering(context,cameras);
@@ -77,11 +102,14 @@ public class SRP0501Instance : RenderPipeline
                 overrideMaterialPassIndex = 0
             };
 
-            //Clear Depth Texture
+            //Clear Depth Textureß
             CommandBuffer cmdDepth = new CommandBuffer();
             cmdDepth.name = "("+camera.name+")"+ "Depth Clear Flag";
             cmdDepth.SetRenderTarget(m_DepthRT); //Set CameraTarget to the depth texture
-            cmdDepth.ClearRenderTarget(true, true, Color.black);
+         
+            cmdDepth.ClearRenderTarget(false, true, Color.green);
+            //debug
+            MyDebug(camera, context,m_DepthRT,depthRTDesc,null);
             context.ExecuteCommandBuffer(cmdDepth);
             cmdDepth.Release();
 
@@ -91,10 +119,13 @@ public class SRP0501Instance : RenderPipeline
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
             context.DrawRenderers(cull, ref drawSettingsDepth, ref filterSettings);
 
+           
+            
             //To let shader has _CameraDepthTexture
             CommandBuffer cmdDepthTexture = new CommandBuffer();
             cmdDepthTexture.name = "("+camera.name+")"+ "Depth Texture";
             cmdDepthTexture.SetGlobalTexture(m_DepthRTid,m_DepthRT);
+
             context.ExecuteCommandBuffer(cmdDepthTexture);
             cmdDepthTexture.Release();
 
@@ -108,18 +139,19 @@ public class SRP0501Instance : RenderPipeline
             //Skybox
             if(drawSkyBox)  {  context.DrawSkybox(camera);  }
 
+            AfterSkybox(camera, context);
             //Opaque objects
             sortingSettings.criteria = SortingCriteria.CommonOpaque;
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+            AfterOpaqueObject(camera, context);
             //Transparent objects
             sortingSettings.criteria = SortingCriteria.CommonTransparent;
             drawSettings.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
             context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
-
+           
             //Clean Up
             CommandBuffer cmdclean = new CommandBuffer();
             cmdclean.name = "("+camera.name+")"+ "Clean Up";
