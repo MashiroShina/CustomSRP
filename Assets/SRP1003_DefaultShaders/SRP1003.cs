@@ -107,7 +107,15 @@ public class SRP1003 : RenderPipelineAsset
 public class SRP1003Instance : RenderPipeline
 {
     private static readonly ShaderTagId m_PassName = new ShaderTagId("SRP1003_Pass"); //The shader pass tag just for SRP1003
-
+    private static List<ShaderTagId> m_LegacyShaderPassNames = new List<ShaderTagId>()
+        {
+            new ShaderTagId("SRP1003_Pass"),
+            new ShaderTagId("ForwardBase"),
+            new ShaderTagId("ForwardAdd"),
+            new ShaderTagId("ShadowCaster"),
+            new ShaderTagId("Deferred"),
+            new ShaderTagId("Meta"),
+        };
     public SRP1003Instance()
     {
     }
@@ -145,20 +153,27 @@ public class SRP1003Instance : RenderPipeline
             DrawingSettings drawSettings = new DrawingSettings(m_PassName, sortingSettings);
             FilteringSettings filterSettings = new FilteringSettings(RenderQueueRange.all);
 
+            DrawingSettings mDW = new DrawingSettings(m_LegacyShaderPassNames[0], sortingSettings);
+            for (int i = 1; i < m_LegacyShaderPassNames.Count; i++)
+            {
+                mDW.SetShaderPassName (i, m_LegacyShaderPassNames[i]);
+            }
+
             //Skybox
             if(drawSkyBox)  {  context.DrawSkybox(camera);  }
 
             //Opaque objects
             sortingSettings.criteria = SortingCriteria.CommonOpaque;
-            drawSettings.sortingSettings = sortingSettings;
+            mDW.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
-            context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
+            context.DrawRenderers(cull, ref mDW, ref filterSettings);
+
 
             //Transparent objects
             sortingSettings.criteria = SortingCriteria.CommonTransparent;
-            drawSettings.sortingSettings = sortingSettings;
+            mDW.sortingSettings = sortingSettings;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
-            context.DrawRenderers(cull, ref drawSettings, ref filterSettings);
+            context.DrawRenderers(cull, ref mDW, ref filterSettings);
 
             context.Submit();
             

@@ -40,7 +40,6 @@
                 float sceneZ = LinearEyeDepth (tex2D(_CameraDepthTexture, uv));
                 float partZ = i.projPos.z;
                 float fZ = (sceneZ-partZ);
-
                 float4 col;
                 col.rgb = abs(sceneZ) * 0.1f;
                 col.a=1;

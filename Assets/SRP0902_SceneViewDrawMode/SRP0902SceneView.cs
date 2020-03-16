@@ -22,7 +22,8 @@ using UnityEngine;
                 cameraMode.drawMode == DrawCameraMode.AlphaChannel ||
                 cameraMode.drawMode == DrawCameraMode.Overdraw ||
                 cameraMode.drawMode == DrawCameraMode.Mipmaps ||
-                cameraMode.drawMode == DrawCameraMode.UserDefined // ||
+                cameraMode.drawMode == DrawCameraMode.UserDefined 
+                // ||
                 //cameraMode.drawMode == DrawCameraMode.SpriteMask ||
                 //cameraMode.drawMode == DrawCameraMode.DeferredDiffuse ||
                 //cameraMode.drawMode == DrawCameraMode.DeferredSpecular ||

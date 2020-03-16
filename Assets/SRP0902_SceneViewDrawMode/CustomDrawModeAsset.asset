@@ -22,3 +22,6 @@ MonoBehaviour:
   - name: UV0
     category: CustomDrawMode
     shader: {fileID: 4800000, guid: 34fdc2737c650435c8407cb74a81aeff, type: 3}
+  - name: Depth
+    category: CustomDrawMode
+    shader: {fileID: 4800000, guid: 1711a65035e57463ab745cf73a2cf583, type: 3}

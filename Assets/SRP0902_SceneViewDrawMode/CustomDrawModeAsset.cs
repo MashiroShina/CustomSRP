@@ -74,8 +74,8 @@ public static class CustomDrawModeAssetObject
 		{
 			for (int i=0; i<cdma.customDrawModes.Length; i++)
 			{
-				if(
-					cdma.customDrawModes[i].name != "" && 
+				if (
+					cdma.customDrawModes[i].name != "" &&
 					sceneView.cameraMode.name == cdma.customDrawModes[i].name
 				)
 				{
